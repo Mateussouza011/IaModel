@@ -4,60 +4,94 @@ import joblib
 import pandas as pd
 import uvicorn
 import os
+import tensorflow as tf
+from contextlib import asynccontextmanager
 
-# Definir a estrutura dos dados de entrada
-class InsuranceInput(BaseModel):
-    age: int
-    sex: str
-    bmi: float
-    children: int
-    smoker: str
-    region: str
+# --- CONFIGURATION ---
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+MODELS_DIR = os.path.join(BASE_DIR, 'models')
+MODEL1_PATH = os.path.join(MODELS_DIR, 'model1.keras')
+MODEL2_PATH = os.path.join(MODELS_DIR, 'model2.keras')
+PREPROCESSOR_PATH = os.path.join(MODELS_DIR, 'preprocessor.joblib')
 
-# Inicializar a aplicação
-app = FastAPI(title="Insurance Cost Prediction API")
+# --- GLOBAL STATE ---
+models = {}
 
-# Carregar o modelo treinado
-# Carregar o modelo treinado
-import os
-MODEL_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'models', 'voting_model.joblib')
+# --- LIFESPAN MANAGER ---
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """
+    Load models on startup and clean up on shutdown.
+    """
+    try:
+        if os.path.exists(MODEL1_PATH) and os.path.exists(MODEL2_PATH) and os.path.exists(PREPROCESSOR_PATH):
+            print("Loading models and preprocessor...")
+            models["model1"] = tf.keras.models.load_model(MODEL1_PATH)
+            models["model2"] = tf.keras.models.load_model(MODEL2_PATH)
+            models["preprocessor"] = joblib.load(PREPROCESSOR_PATH)
+            print("Models loaded successfully!")
+        else:
+            print("WARNING: Models not found. Please run training script first.")
+    except Exception as e:
+        print(f"Error loading models: {e}")
+    
+    yield
+    
+    # Cleanup (if needed)
+    models.clear()
 
-if not os.path.exists(MODEL_PATH):
-    raise RuntimeError(f"Modelo não encontrado em {MODEL_PATH}. Execute o treinamento primeiro.")
+# --- APP INITIALIZATION ---
+app = FastAPI(title="Diamonds Price Prediction API", lifespan=lifespan)
 
-model = joblib.load(MODEL_PATH)
+# --- DATA MODELS ---
+class DiamondInput(BaseModel):
+    carat: float
+    cut: str
+    color: str
+    clarity: str
+    depth: float
+    table: float
+    x: float
+    y: float
+    z: float
 
+# --- ROUTES ---
 @app.get("/")
 def read_root():
-    return {"message": "API de Previsão de Custos de Seguro está online!"}
+    return {"message": "Diamonds Price Prediction API is online!"}
 
 @app.post("/predict")
-def predict_insurance(data: InsuranceInput):
+def predict_price(data: DiamondInput):
+    if not models.get("model1") or not models.get("model2") or not models.get("preprocessor"):
+        raise HTTPException(status_code=503, detail="Models not loaded. Service unavailable.")
+    
     try:
-        # Converter input para DataFrame (formato esperado pelo pipeline)
-        input_data = pd.DataFrame([data.dict()])
+        # Prepare input
+        input_df = pd.DataFrame([data.dict()])
         
-        # Fazer a predição
-        prediction = model.predict(input_data)
+        # Preprocess
+        processed_data = models["preprocessor"].transform(input_df)
+        
+        # Predict
+        pred1 = models["model1"].predict(processed_data).flatten()[0]
+        pred2 = models["model2"].predict(processed_data).flatten()[0]
+        
+        # Ensemble (Simple Average)
+        final_prediction = (pred1 + pred2) / 2
         
         return {
-            "predicted_charges": float(prediction[0]),
-            "input_data": data.dict()
+            "predicted_price": float(final_prediction),
+            "details": {
+                "model1": float(pred1),
+                "model2": float(pred2)
+            },
+            "input": data.dict()
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# Listar rotas na inicialização para debug
-@app.on_event("startup")
-async def startup_event():
-    print("Rotas disponíveis:")
-    for route in app.routes:
-        print(f" - {route.path} [{route.methods}]")
+        raise HTTPException(status_code=500, detail=f"Prediction error: {str(e)}")
 
 if __name__ == "__main__":
-    # Executar com reload=True para facilitar desenvolvimento
-    # Adicionando diretório atual ao path para que o uvicorn encontre o módulo api
+    # Add current directory to path to allow running directly
     import sys
-    import os
     sys.path.append(os.path.dirname(__file__))
     uvicorn.run("api:app", host="0.0.0.0", port=8005, reload=True)

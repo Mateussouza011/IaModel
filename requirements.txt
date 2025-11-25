@@ -8,3 +8,5 @@ httpx
 streamlit
 requests
 plotly
+tensorflow
+seaborn
