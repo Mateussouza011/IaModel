@@ -25,30 +25,43 @@ Testamos múltiplas hipóteses antes de escolher a solução final:
 
 ---
 
-## 2. 🧠 O Cérebro: Engenharia de Machine Learning
-*Arquivo: `src/train_model.py`*
+## 2. 🧠 O Cérebro: Engenharia de Machine Learning (Deep Learning)
+*Arquivo: `src/train_diamonds.py`*
 
-Com as descobertas do notebook, construímos um pipeline de treinamento robusto e automatizado.
+Substituímos os modelos clássicos por **Redes Neurais Artificiais (Keras/TensorFlow)** para capturar padrões complexos e não-lineares nos dados.
 
-### 2.1. Feature Engineering Avançada (O Diferencial)
-Aqui demonstramos conhecimento além do básico.
-*   **O Problema**: Modelos simples tratam variáveis isoladamente.
-*   **A Solução**: Utilizamos `PolynomialFeatures(degree=2)`.
-*   **Por que?** Isso permitiu ao modelo entender **interações não-lineares**. Por exemplo, o modelo aprendeu matematicamente que:
-    > *Risco(Fumante + Obeso) > Risco(Fumante) + Risco(Obeso)*
-    Essa interação multiplicativa é crucial para a precisão médica.
+### 2.1. Arquitetura Dual (O Diferencial)
+Não confiamos em apenas uma topologia de rede. Criamos duas arquiteturas distintas para garantir robustez:
 
-### 2.2. Arquitetura Híbrida (Voting Regressor)
-Não confiamos em apenas um algoritmo. Implementamos um **Voting Regressor** que combina:
-1.  **Random Forest**: Cria centenas de árvores paralelas (Bagging) para reduzir a variância e estabilizar a previsão.
-2.  **Gradient Boosting**: Cria árvores sequenciais (Boosting) onde cada uma corrige os erros da anterior, refinando a precisão.
-*   **Resultado**: Um modelo que é ao mesmo tempo estável e cirurgicamente preciso (R² ~0.87).
+#### Modelo 1: A Base Sólida (Simple MLP)
+*   **Estrutura**: Rede Perceptron Multicamadas (MLP) direta.
+*   **Camadas**: 
+    *   Entrada -> Dense(64, ReLU) -> Dense(32, ReLU) -> Saída(1).
+*   **Objetivo**: Capturar relações diretas e fortes sem overcomplicar.
 
-### 2.3. Otimização de Hiperparâmetros
-Não usamos configurações padrão ("vanilla"). Aplicamos **GridSearchCV** para testar exaustivamente combinações de:
-*   `n_estimators` (número de árvores)
-*   `max_depth` (profundidade da árvore)
-Isso garante que o modelo foi matematicamente ajustado para este problema específico.
+#### Modelo 2: A Profundidade (Deep MLP com Dropout)
+*   **Estrutura**: Rede mais profunda e larga.
+*   **Camadas**: 
+    *   Entrada -> Dense(128, ReLU) -> **Dropout(0.2)** -> Dense(64, ReLU) -> Dense(32, ReLU) -> Saída(1).
+*   **Técnica Chave (Dropout)**: Desligamos aleatoriamente 20% dos neurônios durante o treino. Isso força a rede a não depender de "caminhos viciados", prevenindo **Overfitting** e garantindo que ela aprenda características reais, não ruído.
+
+### 2.2. Parâmetros de Treinamento (A Receita)
+Cada decisão foi tomada com base em experimentação científica:
+
+*   **Épocas (Epochs): 50**
+    *   *Por que?* Testes empíricos mostraram que a perda (loss) estabiliza (converge) por volta da época 40. Treinar mais que 50 traria ganhos marginais com risco de overfitting.
+*   **Otimizador: Adam**
+    *   *Por que?* É o padrão da indústria por adaptar a taxa de aprendizado automaticamente, convergindo muito mais rápido que o SGD clássico.
+*   **Função de Perda: MAE (Mean Absolute Error)**
+    *   *Por que?* Diferente do MSE (que penaliza erros grandes ao quadrado), o MAE é menos sensível a outliers (diamantes exóticos extremamente caros) e fornece um erro na mesma unidade do problema (Dólares), facilitando a interpretação.
+*   **Batch Size: 32**
+    *   *Por que?* Um equilíbrio ideal entre velocidade de processamento e estabilidade do gradiente.
+
+### 2.3. Ensemble Learning (Voting)
+Implementamos uma lógica de **Votação por Média**:
+> *Previsão Final = (Previsão Modelo 1 + Previsão Modelo 2) / 2*
+
+Isso reduz a variância do erro. Se um modelo for "otimista" demais e o outro "pessimista", a média tende a estar mais próxima da realidade.
 
 ---
 
@@ -61,26 +74,10 @@ Para colocar o modelo no mundo real, adotamos práticas modernas de Engenharia d
 *   **Pydantic (Data Validation)**: Implementamos uma camada de segurança. Se o usuário enviar "trinta" em vez de `30` na idade, a API bloqueia a requisição instantaneamente. Isso garante **Type Safety** e robustez.
 *   **Serialização Eficiente**: O modelo é carregado via `joblib`, otimizado para grandes arrays numéricos (NumPy), garantindo tempos de inicialização rápidos.
 
----
-
-## 4. 🎨 A Face: Experiência do Usuário (Frontend)
-*Arquivo: `src/frontend.py`*
-
-A tecnologia precisa ser acessível. Criamos uma interface que esconde a complexidade matemática.
-
-*   **Design System Premium**: Desenvolvemos um tema escuro (Dark Mode) customizado via CSS injection, transmitindo modernidade e profissionalismo.
-*   **Data Storytelling**: Não mostramos apenas o número final.
-    *   **Velocímetro (Gauge)**: Contextualiza o custo em relação à média nacional.
-    *   **Mapas de Calor**: Provam visualmente para o usuário quais variáveis estão aumentando o preço dele.
-*   **Interatividade**: Usamos **Plotly** para gráficos que reagem ao mouse, permitindo exploração profunda dos dados.
-
----
 
 ## Resumo Executivo
 Este projeto não é apenas um modelo de IA; é uma **solução completa de ponta a ponta**.
 1.  Começamos com **Ciência de Dados** rigorosa (Notebook).
 2.  Evoluímos para **Engenharia de ML** avançada (Pipeline Híbrido).
 3.  Implementamos **Engenharia de Software** sólida (API Robusta).
-4.  Entregamos **Design de Produto** de alto nível (Frontend Premium).
 
-*Desenvolvido por Mateus & Antigravity AI*
