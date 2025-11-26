@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import joblib
 import pandas as pd
@@ -35,6 +36,26 @@ async def lifespan(app: FastAPI):
     models.clear()
 
 app = FastAPI(title="Diamonds Price Prediction API", lifespan=lifespan)
+
+# Configuração de CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:*",
+        "http://127.0.0.1:*",
+        "http://localhost:8080",
+        "http://localhost:3000",
+        "http://localhost:5000",
+        "http://127.0.0.1:8080",
+        "https://*.web.app",
+        "https://*.firebaseapp.com",
+        "https://*.github.io",
+        "*"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class DiamondInput(BaseModel):
     carat: float
