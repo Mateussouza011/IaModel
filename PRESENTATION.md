@@ -1,130 +1,251 @@
-# Previsão de Preço de Diamantes com IA
+# 💎 Previsão de Preço de Diamantes com IA
 
-## Estrutura do Projeto
+> **Projeto de Machine Learning** | Redes Neurais com TensorFlow | API REST + Interface Web
+
+---
+
+## 📁 Estrutura do Projeto
 
 ```
 IaModel/
-├── models/                     → Modelos treinados
+├── models/                     → Modelos treinados (.keras + preprocessor)
+│   ├── model1.keras            → Rede Neural Simples (64→32→1)
+│   ├── model2.keras            → Rede Neural com Dropout (128→64→32→1)
+│   └── preprocessor.joblib     → Pré-processador de dados
 ├── notebooks/
-│   └── treinamentoPredictDiamantes.ipynb
+│   └── treinamentoPredictDiamantes.ipynb  → Notebook de treinamento (Colab)
 ├── src/
-│   ├── api.py                  → API REST
-│   └── frontend.py             → Interface
-└── scripts/
+│   ├── api.py                  → API REST (FastAPI)
+│   └── frontend.py             → Interface Web (Streamlit)
+└── scripts/                    → Scripts de execução
 ```
 
 ---
 
-## Roteiro da Apresentação
+## 🎯 Roteiro da Apresentação
 
 ### 1. Introdução (2 min)
 
-> "Criamos uma IA que aprende a precificar diamantes automaticamente."
+> 💡 *"Criamos uma IA que aprende a precificar diamantes automaticamente, analisando características físicas e retornando uma estimativa de preço em dólares."*
 
-**Mostre:** `http://localhost:8501`
+**Demonstração rápida:** Acesse `http://localhost:8501`
+
+**Problema resolvido:** Avaliação manual de diamantes é subjetiva e demorada. Nossa IA padroniza e acelera esse processo.
 
 ---
 
 ### 2. Os Dados (3 min)
 
-| Característica | Significado             |
-|----------------|-------------------------|
-| Carat          | Peso (quilates)         |
-| Cut            | Qualidade do corte      |
-| Color          | Cor (D=melhor → J=pior) |
-| Clarity        | Clareza interna         |
-| X, Y, Z        | Dimensões (mm)          |
+#### Dataset: Diamonds (Kaggle/Seaborn)
 
-**Números:** 53.940 diamantes | 80% treino / 20% teste | 9 características
+| Característica | Significado | Tipo |
+|----------------|-------------|------|
+| **Carat** | Peso em quilates | Numérico |
+| **Cut** | Qualidade do corte | Categórico (Fair → Ideal) |
+| **Color** | Cor da pedra | Categórico (D=melhor → J=pior) |
+| **Clarity** | Clareza interna | Categórico (I1 → IF) |
+| **Depth** | Profundidade (%) | Numérico |
+| **Table** | Largura do topo (%) | Numérico |
+| **X, Y, Z** | Dimensões em mm | Numérico |
 
-**Notebook:**
+#### Estatísticas do Dataset
 
-| Célula | Conteúdo               |
-|--------|------------------------|
-| 5      | Primeiros dados        |
-| 6      | Estatísticas           |
-| 10     | Histograma e Boxplot   |
-| 12     | Matriz de correlação   |
-| 14     | Scatter Carat vs Preço |
+| Métrica | Valor |
+|---------|-------|
+| 📊 Total de diamantes | **53.940** |
+| 🎯 Divisão treino/teste | **80% / 20%** |
+| 📈 Características | **9 features** |
+| 💰 Preço médio | **~$3.933** |
+| 💎 Preço máximo | **$18.823** |
+
+#### Células do Notebook para mostrar:
+
+| Célula | Conteúdo | O que explicar |
+|--------|----------|----------------|
+| 5 | Primeiros dados | Estrutura do dataset |
+| 6 | Estatísticas | Distribuição dos valores |
+| 10 | Histograma e Boxplot | Distribuição de preços |
+| 12 | Matriz de correlação | **Carat tem 0.92 de correlação com preço!** |
+| 14 | Scatter Carat vs Preço | Relação visual peso × preço |
 
 ---
 
-### 3. A IA (5 min)
+### 3. A Inteligência Artificial (5 min)
 
-> "Redes neurais - como um cérebro artificial que aprende com exemplos."
+> 🧠 *"Redes neurais funcionam como um cérebro artificial: recebem dados, aprendem padrões e fazem previsões."*
 
-| Parâmetro  | Valor |
-|------------|-------|
-| Épocas     | 50    |
-| Batch Size | 32    |
-| Validation | 20%   |
+#### Arquitetura dos Modelos
 
-**Arquitetura:**
-- Modelo 1: 64 → 32 → 1
-- Modelo 2: 128 → Dropout(20%) → 64 → 32 → 1
+```
+MODELO 1 (Simples)              MODELO 2 (Com Regularização)
+┌─────────────────┐             ┌─────────────────┐
+│   Input (9)     │             │   Input (9)     │
+└────────┬────────┘             └────────┬────────┘
+         │                               │
+┌────────▼────────┐             ┌────────▼────────┐
+│  Dense(64,ReLU) │             │ Dense(128,ReLU) │
+└────────┬────────┘             └────────┬────────┘
+         │                               │
+┌────────▼────────┐             ┌────────▼────────┐
+│  Dense(32,ReLU) │             │  Dropout(20%)   │
+└────────┬────────┘             └────────┬────────┘
+         │                               │
+┌────────▼────────┐             ┌────────▼────────┐
+│   Output (1)    │             │  Dense(64,ReLU) │
+└─────────────────┘             └────────┬────────┘
+                                         │
+                                ┌────────▼────────┐
+                                │  Dense(32,ReLU) │
+                                └────────┬────────┘
+                                         │
+                                ┌────────▼────────┐
+                                │   Output (1)    │
+                                └─────────────────┘
+```
 
-**Notebook:**
+#### Hiperparâmetros de Treinamento
+
+| Parâmetro | Valor | Por quê? |
+|-----------|-------|----------|
+| **Épocas** | 50 | Suficiente para convergência |
+| **Batch Size** | 32 | Balanço entre velocidade e precisão |
+| **Validation Split** | 20% | Monitorar overfitting |
+| **Optimizer** | Adam | Adaptativo, eficiente |
+| **Loss** | MSE | Padrão para regressão |
+
+#### Células do Notebook:
 
 | Célula | Conteúdo |
 |--------|----------|
-| 16 | Pré-processamento |
-| 18 | Definição dos modelos |
-| 19 | Treinamento |
-| 21 | Histórico de treino |
+| 16 | Pré-processamento (OneHotEncoder + StandardScaler) |
+| 18 | Definição da arquitetura dos modelos |
+| 19 | Treinamento (model.fit) |
+| 21 | Gráfico de histórico de treino (loss × epochs) |
 
 ---
 
 ### 4. Resultados (3 min)
 
-> "MAE = Erro Médio Absoluto em dólares."
+> 📊 *"MAE = Erro Médio Absoluto. Se o MAE é $500, significa que em média erramos $500 no preço."*
 
-**Notebook:**
+#### Métricas de Performance
+
+| Modelo | MAE (Erro Médio) | Interpretação |
+|--------|------------------|---------------|
+| Modelo 1 | ~$280 | Erra em média $280 |
+| Modelo 2 | ~$275 | Levemente melhor com Dropout |
+| **Ensemble (Voting)** | **~$270** | Média dos dois é mais estável |
+
+#### Como funciona o Voting?
+```python
+preço_final = (modelo1.predict() + modelo2.predict()) / 2
+```
+
+#### Células do Notebook:
 
 | Célula | Conteúdo |
 |--------|----------|
-| 23 | Tabela MAE |
-| 25 | Gráfico Previsão vs Real |
-| 27 | Comparação de MAE |
+| 23 | Tabela comparativa de MAE |
+| 25 | Gráfico Previsão vs Real (scatter plot) |
+| 27 | Comparação visual de MAE entre modelos |
 
 ---
 
-### 5. Demo (3 min)
+### 5. Demonstração ao Vivo (3 min)
 
-1. Abra `http://localhost:8501`
-2. Preencha: Carat=1.0, Cut=Ideal, Color=G, Clarity=VS1
-3. Clique "Prever"
-4. Mude Carat para 2.0 → veja o preço subir
+#### Passo a passo:
+
+1. **Abra o frontend:** `http://localhost:8501`
+
+2. **Preencha um diamante de exemplo:**
+   | Campo | Valor |
+   |-------|-------|
+   | Carat | 1.0 |
+   | Cut | Ideal |
+   | Color | G |
+   | Clarity | VS1 |
+   | Depth | 61.5 |
+   | Table | 55.0 |
+   | X | 6.5 |
+   | Y | 6.5 |
+   | Z | 4.0 |
+
+3. **Clique em "Prever"** → Veja o preço estimado (~$6.500)
+
+4. **Experimente:** Mude o Carat para **2.0** → Preço sobe para ~$16.000!
 
 ---
 
-## Como Rodar
+## 🚀 Como Rodar o Projeto
 
+### Pré-requisitos
 ```bash
-# API
-cd src && python -m uvicorn api:app --reload --port 8000
+pip install -r requirements.txt
+```
 
-# Frontend
-cd src && streamlit run frontend.py
+### Iniciar a API (Terminal 1)
+```bash
+cd IaModel
+python src/api.py
+```
+> API rodando em: `http://127.0.0.1:8005`
+
+### Iniciar o Frontend (Terminal 2)
+```bash
+cd IaModel
+streamlit run src/frontend.py
+```
+> Frontend rodando em: `http://localhost:8501`
+
+### API em Produção (Railway)
+```
+https://web-production-94f5d.up.railway.app/predict
 ```
 
 ---
 
-## Checklist
+## ✅ Checklist de Verificação
 
-- [ ] Notebook executou no Colab
-- [ ] Modelos baixados em `models/`
-- [ ] API e Frontend rodando
-- [ ] Previsão funcionando
+- [ ] Notebook executou no Google Colab sem erros
+- [ ] Modelos baixados na pasta `models/`
+- [ ] Dependências instaladas (`pip install -r requirements.txt`)
+- [ ] API iniciada e respondendo em `/`
+- [ ] Frontend carregando corretamente
+- [ ] Previsão funcionando (teste com valores acima)
 
 ---
 
-## FAQ
+## ❓ FAQ - Perguntas Frequentes
 
 | Pergunta | Resposta |
 |----------|----------|
-| Quantos dados? | 53.940 |
-| Por que 42? | Reprodutibilidade |
-| O que é Dropout? | Desliga 20% dos neurônios |
-| Voting? | (pred1 + pred2) / 2 |
-| Fator principal? | Carat (correlação 0.92) |
+| Quantos dados foram usados? | **53.940 diamantes** |
+| Por que `random_state=42`? | Garante **reprodutibilidade** dos resultados |
+| O que é Dropout? | Técnica que **desliga 20% dos neurônios** aleatoriamente para evitar overfitting |
+| O que é Voting/Ensemble? | Combina previsões: `(pred1 + pred2) / 2` para maior estabilidade |
+| Qual fator mais influencia o preço? | **Carat** com correlação de **0.92** |
+| Por que dois modelos? | Um simples e um com regularização - ensemble melhora a precisão |
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+| Categoria | Tecnologia |
+|-----------|------------|
+| **ML Framework** | TensorFlow / Keras |
+| **API** | FastAPI + Uvicorn |
+| **Frontend** | Streamlit |
+| **Data Processing** | Pandas, Scikit-learn |
+| **Visualização** | Plotly, Seaborn |
+| **Deploy** | Railway |
+
+---
+
+## 👥 Equipe
+
+*Adicione os nomes dos integrantes aqui*
+
+---
+
+> 💎 *"A IA não substitui o especialista, mas o capacita a tomar decisões mais rápidas e consistentes."*
 
