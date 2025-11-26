@@ -79,4 +79,4 @@ def predict_price(data: DiamondInput):
 if __name__ == "__main__":
     import sys
     sys.path.append(os.path.dirname(__file__))
-    uvicorn.run("api:app", host="0.0.0.0", port=8005, reload=True)
+    uvicorn.run("api:app", host="0.0.0.0", port=8005, reload=False)
