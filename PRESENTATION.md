@@ -10,6 +10,7 @@ Use este documento como guia para sua apresentação. Cada seção indica **o qu
 ---
 
 ## 🎯 PARTE 1: INTRODUÇÃO (2-3 minutos)
+
 ### O que você deve explicar:
 
 **Comece com uma pergunta:**
@@ -20,232 +21,359 @@ Use este documento como guia para sua apresentação. Cada seção indica **o qu
 - Precificar manualmente é demorado e pode ter erros humanos
 - **Nossa solução:** Criamos um "cérebro artificial" que aprende a precificar diamantes automaticamente
 
-**O que mostrar:**
-- Abra o navegador e mostre a interface do sistema funcionando (`frontend.py`)
-- Faça uma previsão rápida para impressionar a audiência
+### 📍 ONDE MOSTRAR:
+
+| O que mostrar | Onde está | Como abrir |
+|---------------|-----------|------------|
+| Interface funcionando | `src/frontend.py` | Terminal: `streamlit run src/frontend.py` |
+| Fazer previsão rápida | Navegador: `http://localhost:8501` | Preencha os campos e clique "Prever" |
 
 ---
 
 ## 📊 PARTE 2: OS DADOS (3-4 minutos)
+
 ### O que você deve explicar:
 
 **De onde vieram os dados:**
-- Usamos um banco de dados chamado "Diamonds Dataset"
-- Contém informações de **mais de 53.000 diamantes**
+- Usamos um banco de dados famoso chamado "Diamonds Dataset"
+- Contém informações de **mais de 53.000 diamantes reais**
 - Cada diamante tem 9 características que influenciam o preço
 
-**As 9 características do diamante (explique de forma simples):**
+**As 9 características do diamante:**
 
 | Característica | O que significa | Exemplo |
-|---------------|-----------------|---------|
+|----------------|-----------------|---------|
 | **Carat** (Quilate) | Peso do diamante | 0.5, 1.0, 2.0 quilates |
 | **Cut** (Corte) | Qualidade do corte | Fair, Good, Very Good, Premium, Ideal |
 | **Color** (Cor) | Quão "branquinho" é | D (melhor) até J (pior) |
 | **Clarity** (Clareza) | Se tem "manchinhas" dentro | IF (perfeito) até I1 (visíveis) |
 | **Depth** (Profundidade) | Altura do diamante | Porcentagem |
 | **Table** (Mesa) | Largura do topo | Porcentagem |
-| **X, Y, Z** | Dimensões em mm | Largura, altura, profundidade |
+| **X, Y, Z** | Dimensões em milímetros | Largura, altura, profundidade |
 
 **Divisão dos dados para treino:**
 - **80% para treinar** (~42.000 diamantes) → a IA "estuda" esses
-- **20% para testar** (~11.000 diamantes) → usamos para ver se ela aprendeu
+- **20% para testar** (~11.000 diamantes) → usamos para verificar se ela aprendeu
 
-**O que mostrar:**
-- Abra o notebook (`notebooks/train_diamonds_colab.ipynb`)
-- Mostre o `df.head()` com os primeiros diamantes
-- Se possível, mostre alguns gráficos de distribuição
+### 📍 ONDE MOSTRAR:
+
+| O que mostrar | Onde está no Notebook | Célula |
+|---------------|----------------------|--------|
+| Primeiros diamantes | `df.head(10)` | Seção 1 - 3ª célula |
+| Total de diamantes | `print(f"Total de diamantes: {len(df):,}")` | Seção 1 - 3ª célula |
+| Estatísticas | `df.describe()` | Seção 1 - 4ª célula |
+| Valores nulos | `df.isnull().sum()` | Seção 1 - 6ª célula |
+| Divisão treino/teste | `train_test_split(X, y, test_size=0.2, random_state=42)` | Seção 3 - 1ª célula de código |
+| Embaralhamento (random_state=42) | Mesma linha acima | Seção 3 - 1ª célula de código |
+
+**🖼️ GRÁFICOS PARA MOSTRAR:**
+
+| Gráfico | Onde está no Notebook | O que explicar |
+|---------|----------------------|----------------|
+| Histograma de Preços | Seção 2.1 - 1ª célula | "Maioria dos diamantes custa menos de $5.000" |
+| Boxplot de Preços | Seção 2.1 - 1ª célula | "Os pontos fora são diamantes muito caros (outliers)" |
+| Distribuição por Corte/Cor/Clareza | Seção 2.2 - 1ª célula | "Ideal é o corte mais comum no dataset" |
+| Preço Médio por Categoria | Seção 2.3 - 1ª célula | "Curiosamente, corte 'Fair' tem preço médio maior (por causa do peso)" |
+| Matriz de Correlação | Seção 2.4 - 1ª célula | "Carat tem correlação 0.92 com preço - é o fator mais importante!" |
+| Carat vs Preço (scatter) | Seção 2.5 - 1ª célula | "Quanto maior o quilate, maior o preço" |
+| Distribuição das variáveis numéricas | Seção 2.6 - 1ª célula | "Mostra como cada característica se distribui" |
 
 ---
 
 ## 🧠 PARTE 3: A INTELIGÊNCIA ARTIFICIAL (5-6 minutos)
+
 ### O que você deve explicar:
 
 **O que é uma Rede Neural (analogia simples):**
 > "Imaginem o cérebro humano: ele tem bilhões de neurônios conectados que aprendem com experiência. Nossa IA funciona de forma parecida, mas com neurônios virtuais."
+
+**O que é um problema de Regressão:**
+> "Nosso problema é de regressão porque queremos prever um número (o preço em dólares). Se fosse para classificar como 'barato' ou 'caro', seria classificação."
 
 **Como ela aprende:**
 1. Mostramos um diamante com o preço real
 2. A IA tenta "chutar" o preço
 3. Calculamos o quanto ela errou
 4. Ela ajusta seus "neurônios" para errar menos
-5. Repetimos isso milhares de vezes
+5. Repetimos isso milhares de vezes (50 épocas)
+
+### 📍 ONDE MOSTRAR:
+
+| O que mostrar | Onde está no Notebook | Célula |
+|---------------|----------------------|--------|
+| Arquitetura Modelo 1 | `model1_temp.summary()` | Seção 4 - 1ª célula de código |
+| Arquitetura Modelo 2 | `model2_temp.summary()` | Seção 4 - 1ª célula de código |
+| Épocas (50) | `epochs=50` | Seção 4 - 2ª célula de código |
+| Batch Size (32) | `batch_size=32` | Seção 4 - 2ª célula de código |
+| Validation Split (20%) | `validation_split=0.2` | Seção 4 - 2ª célula de código |
+| Dropout (20%) | `layers.Dropout(0.2)` | Seção 4 - 1ª célula (create_model_2) |
+| Função de Erro (MAE) | `loss='mae'` | Seção 4 - 1ª célula (model.compile) |
 
 ---
 
 ### 🔢 NÚMEROS TÉCNICOS IMPORTANTES (decore estes!)
 
-| Parâmetro | Valor | O que significa (versão simples) |
-|-----------|-------|----------------------------------|
-| **Épocas** | 50 | A IA "estudou" todos os diamantes 50 vezes |
-| **Batch Size** | 32 | Estuda 32 diamantes de cada vez |
-| **Dados de Treino** | ~42.000 | Quantidade de diamantes para aprender |
-| **Dados de Teste** | ~11.000 | Quantidade para verificar se aprendeu |
-| **Taxa de Aprendizado** | Automática (Adam) | Velocidade que ela aprende |
+| Parâmetro | Valor | Onde está | O que significa |
+|-----------|-------|-----------|-----------------|
+| **Épocas** | 50 | `epochs=50` | A IA "estudou" todos os diamantes 50 vezes |
+| **Batch Size** | 32 | `batch_size=32` | Estuda 32 diamantes de cada vez |
+| **Dados de Treino** | ~42.000 | Output da célula | 80% dos 53.000 diamantes |
+| **Dados de Teste** | ~11.000 | Output da célula | 20% dos 53.000 diamantes |
+| **Validation Split** | 20% | `validation_split=0.2` | Parte do treino para validar |
+| **Random State** | 42 | `random_state=42` | Semente para reproduzir resultados |
+| **Input Shape** | 26 | Output: `Input Shape: 26` | Features após pré-processamento |
 
 ---
 
-### 🏗️ ARQUITETURA DOS MODELOS (versão simples)
+### 🏗️ ARQUITETURA DOS MODELOS
 
-**Por que usamos 2 modelos?**
-> "É como pedir opinião para dois especialistas diferentes e fazer a média. Se um errar muito, o outro compensa."
+### 📍 ONDE MOSTRAR A ARQUITETURA:
 
-**Modelo 1 - O Simples:**
-```
-Entrada (9 características)
-    ↓
-64 neurônios → 32 neurônios → Preço
-```
-- Pensa de forma direta e objetiva
-- Bom para casos "normais"
+**No Notebook - Seção 4, 1ª célula de código:**
 
-**Modelo 2 - O Cuidadoso:**
 ```
-Entrada (9 características)
-    ↓
-128 neurônios → [Dropout 20%] → 64 neurônios → 32 neurônios → Preço
-```
-- Mais detalhista
-- Tem "Dropout": durante o treino, "desliga" 20% dos neurônios aleatoriamente
-- **Por que Dropout?** Evita que a IA "decore" ao invés de "aprender"
+Modelo 1 (Simples):
+┌─────────────────────┐
+│ dense (Dense)       │  → 64 neurônios
+├─────────────────────┤
+│ dense_1 (Dense)     │  → 32 neurônios  
+├─────────────────────┤
+│ dense_2 (Dense)     │  → 1 neurônio (saída = preço)
+└─────────────────────┘
 
-**Previsão Final:**
+Modelo 2 (Com Dropout):
+┌─────────────────────┐
+│ dense_3 (Dense)     │  → 128 neurônios
+├─────────────────────┤
+│ dropout (Dropout)   │  → 20% desligados
+├─────────────────────┤
+│ dense_4 (Dense)     │  → 64 neurônios
+├─────────────────────┤
+│ dense_5 (Dense)     │  → 32 neurônios
+├─────────────────────┤
+│ dense_6 (Dense)     │  → 1 neurônio (saída = preço)
+└─────────────────────┘
 ```
-Preço Final = (Previsão Modelo 1 + Previsão Modelo 2) ÷ 2
-```
+
+**O que explicar:**
+> "É como pedir opinião para dois especialistas diferentes e fazer a média. Se um errar muito, o outro compensa. Isso se chama Voting Ensemble."
 
 ---
 
-### 📉 FUNÇÃO DE ERRO: MAE (Erro Médio Absoluto)
+### 📍 GRÁFICOS DE TREINAMENTO (Seção 4.1):
 
-**O que é MAE?**
-> "É a média de quanto a IA erra em dólares. Se o MAE é 300, significa que em média ela erra $300 para mais ou para menos."
-
-**Por que escolhemos MAE?**
-- Fácil de entender (está em dólares!)
-- Não pune demais diamantes muito caros ou muito baratos
-
-**O que mostrar:**
-- Mostre o código do modelo em `src/train_diamonds.py`
-- Aponte para os números: epochs=50, batch_size=32
-- Se tiver os resultados, mostre o MAE final
+| Gráfico | O que mostra | O que explicar |
+|---------|--------------|----------------|
+| Histórico Modelo 1 | Linha azul (treino) e vermelha (validação) | "O erro vai diminuindo a cada época" |
+| Histórico Modelo 2 | Linha azul (treino) e vermelha (validação) | "Se as linhas se afastam muito = overfitting" |
 
 ---
 
-## ⚡ PARTE 4: O SISTEMA EM PRODUÇÃO (3-4 minutos)
-### O que você deve explicar:
+## 📊 PARTE 4: RESULTADOS (3-4 minutos)
 
-**Como transformamos a IA em um serviço web:**
+### 📍 ONDE MOSTRAR OS RESULTADOS:
 
+| O que mostrar | Onde está no Notebook | Célula |
+|---------------|----------------------|--------|
+| MAE Modelo 1 | `print(f"Modelo 1 MAE: ${mae1:,.2f}")` | Seção 5 - 1ª célula |
+| MAE Modelo 2 | `print(f"Modelo 2 MAE: ${mae2:,.2f}")` | Seção 5 - 1ª célula |
+| MAE Voting | `print(f"Voting Ensemble MAE: ${mae_voting:,.2f}")` | Seção 5 - 1ª célula |
+| Melhor modelo | Mensagem "🏆 O ... teve o melhor desempenho!" | Seção 5 - 1ª célula |
+
+### 📍 GRÁFICOS DE RESULTADOS:
+
+| Gráfico | Seção | O que explicar |
+|---------|-------|----------------|
+| Previsão vs Real (3 gráficos) | Seção 5.1 | "Quanto mais perto da linha vermelha, melhor a previsão" |
+| Distribuição dos Erros | Seção 5.2 | "A maioria dos erros está perto de zero (centro)" |
+| Comparação de MAE (barras) | Seção 5.3 | "Mostra qual modelo errou menos em média" |
+
+---
+
+## ⚡ PARTE 5: O SISTEMA EM PRODUÇÃO (3-4 minutos)
+
+### 📍 ONDE MOSTRAR CADA ARQUIVO:
+
+| Componente | Arquivo | Como abrir no VS Code |
+|------------|---------|----------------------|
+| Notebook de Treino | `notebooks/train_diamonds_colab.ipynb` | Duplo clique no arquivo |
+| API | `src/api.py` | Duplo clique no arquivo |
+| Frontend | `src/frontend.py` | Duplo clique no arquivo |
+| Modelos treinados | `models/model1.keras` | Apenas mencione (arquivo binário) |
+| Pré-processador | `models/preprocessor.joblib` | Apenas mencione (arquivo binário) |
+
+### 📍 ONDE MOSTRAR A API:
+
+| O que mostrar | URL | Como chegar |
+|---------------|-----|-------------|
+| Documentação da API | `http://localhost:8000/docs` | Abra no navegador |
+| Testar endpoint | Clique em `/predict` → "Try it out" | Preencha os dados e execute |
+| Ver resposta JSON | Resultado aparece abaixo | Mostra as 3 previsões |
+
+### 📍 ONDE MOSTRAR O FRONTEND:
+
+| O que mostrar | URL | Como chegar |
+|---------------|-----|-------------|
+| Interface visual | `http://localhost:8501` | Abra no navegador |
+| Campos de entrada | Lado esquerdo da tela | Sliders e dropdowns |
+| Botão de previsão | Abaixo dos campos | Clique para prever |
+| Resultados | Centro da tela | Mostra os 3 preços |
+
+---
+
+## 🎬 PARTE 6: DEMONSTRAÇÃO AO VIVO (3-5 minutos)
+
+### 📍 PASSO A PASSO COM LOCAIS EXATOS:
+
+**Passo 1 - Abrir o Frontend:**
 ```
-Usuário → Interface (Frontend) → API → Modelos de IA → Resposta com preço
+Navegador → http://localhost:8501
 ```
 
-**Componentes do sistema:**
+**Passo 2 - Preencher dados de teste:**
 
-| Componente | Arquivo | O que faz |
-|------------|---------|-----------|
-| **API** | `src/api.py` | Recebe pedidos e retorna previsões |
-| **Frontend** | `src/frontend.py` | Tela bonita para o usuário |
-| **Modelos** | `models/*.keras` | O "cérebro" treinado |
-| **Pré-processador** | `models/preprocessor.joblib` | Prepara os dados para a IA |
+| Campo | Valor | Onde está na tela |
+|-------|-------|-------------------|
+| Carat | 1.0 | Primeiro slider |
+| Cut | Ideal | Primeiro dropdown |
+| Color | G | Segundo dropdown |
+| Clarity | VS1 | Terceiro dropdown |
+| Depth | 61.5 | Segundo slider |
+| Table | 55.0 | Terceiro slider |
+| X | 6.5 | Quarto slider |
+| Y | 6.5 | Quinto slider |
+| Z | 4.0 | Sexto slider |
 
-**Tecnologias usadas (mencione rapidamente):**
-- **Python**: Linguagem de programação principal
-- **TensorFlow/Keras**: Biblioteca para criar redes neurais
-- **FastAPI**: Framework para criar a API web
-- **Streamlit ou Gradio**: Interface visual amigável
+**Passo 3 - Clicar em "Prever":**
+```
+Botão azul abaixo dos campos
+```
 
-**O que mostrar:**
-- Execute `scripts/run_api.bat` e mostre a API funcionando
-- Execute `scripts/run_frontend.bat` e mostre a interface
-- Faça uma previsão ao vivo!
+**Passo 4 - Mostrar resultados:**
+```
+Centro da tela - aparece:
+- Previsão Modelo 1: $X,XXX
+- Previsão Modelo 2: $X,XXX  
+- Previsão Final (Voting): $X,XXX
+```
 
----
+**Passo 5 - Mudar valores e mostrar impacto:**
 
-## 🎬 PARTE 5: DEMONSTRAÇÃO AO VIVO (3-5 minutos)
-### Passo a passo da demo:
-
-1. **Abra a interface** do frontend
-2. **Preencha os dados** de um diamante fictício:
-   - Carat: 1.0
-   - Cut: Ideal
-   - Color: G
-   - Clarity: VS1
-   - Depth: 61.5
-   - Table: 55.0
-   - X: 6.5, Y: 6.5, Z: 4.0
-3. **Clique em "Prever"**
-4. **Mostre o resultado** e explique:
-   - Previsão do Modelo 1
-   - Previsão do Modelo 2
-   - Média final
-5. **Mude alguns valores** e mostre como o preço muda
+| Mudança | Efeito esperado |
+|---------|-----------------|
+| Carat: 1.0 → 2.0 | Preço sobe MUITO (carat é o fator mais importante) |
+| Cut: Ideal → Fair | Preço cai um pouco |
+| Clarity: VS1 → I1 | Preço cai |
 
 ---
 
-## ❓ PARTE 6: PERGUNTAS FREQUENTES (tenha estas respostas prontas)
+## 📍 RESUMO: MAPA COMPLETO DO QUE MOSTRAR
 
-**"A IA sempre acerta?"**
-> "Não, ela tem uma margem de erro. Em média, erra cerca de X dólares. Mas é muito mais rápida e consistente que uma avaliação manual."
+### NO NOTEBOOK (Google Colab):
 
-**"E se eu colocar dados errados?"**
-> "O sistema valida os dados antes de processar. Se você digitar 'dez' ao invés de '10', ele avisa que está errado."
+| Seção | O que tem | O que falar |
+|-------|-----------|-------------|
+| **1** | Carregamento dos dados | "53.000 diamantes, 9 características" |
+| **2.1** | Histograma/Boxplot de preços | "Maioria custa menos de $5.000" |
+| **2.2** | Distribuição categóricas | "Ideal é o corte mais comum" |
+| **2.3** | Preço médio por categoria | "Corte 'Fair' tem preço alto por causa do peso" |
+| **2.4** | Matriz de correlação | "Carat tem 0.92 de correlação com preço!" |
+| **2.5** | Scatter Carat vs Preço | "Relação direta entre peso e preço" |
+| **2.6** | Distribuição numéricas | "Como cada variável se distribui" |
+| **3** | Pré-processamento | "80% treino, 20% teste, random_state=42" |
+| **4** | Arquitetura dos modelos | "64→32→1 vs 128→dropout→64→32→1" |
+| **4** | Treinamento | "50 épocas, batch 32" |
+| **4.1** | Gráficos de treinamento | "Erro diminui a cada época" |
+| **5** | Resultados MAE | "Erro médio em dólares" |
+| **5.1** | Previsão vs Real | "Pontos na linha = previsão perfeita" |
+| **5.2** | Distribuição de erros | "Maioria dos erros perto de zero" |
+| **5.3** | Comparação de MAE | "Qual modelo foi melhor" |
+| **6** | Salvar modelos | "Exporta para usar na API" |
+| **7** | Teste de carregamento | "Verifica se os modelos funcionam" |
 
-**"Quanto tempo leva para treinar?"**
-> "Com 50 épocas e 42.000 diamantes, leva cerca de 5-10 minutos em um computador comum."
+### NA API (`http://localhost:8000/docs`):
 
-**"Ela funciona para outros produtos?"**
-> "Sim! Podemos adaptar para carros, imóveis, qualquer coisa que tenha características mensuráveis e preços históricos."
+| Endpoint | O que mostrar |
+|----------|---------------|
+| `/predict` | Enviar dados e receber previsões |
+| `/health` | Verificar se está funcionando |
 
----
+### NO FRONTEND (`http://localhost:8501`):
 
-## 📌 RESUMO FINAL (1 minuto)
-
-Termine a apresentação com estes pontos:
-
-✅ **O Problema:** Precificar diamantes é complexo e demorado
-
-✅ **A Solução:** Uma IA que aprende com 53.000 diamantes reais
-
-✅ **A Tecnologia:** Duas redes neurais que "votam" juntas
-
-✅ **O Resultado:** Previsões em menos de 1 segundo
-
-✅ **O Diferencial:** Sistema completo, do treino ao deploy
-
----
-
-## 🎯 DICAS PARA A APRESENTAÇÃO
-
-1. **Fale devagar** nos termos técnicos
-2. **Use analogias** (cérebro, especialistas votando, etc.)
-3. **Faça a demo funcionar ANTES** da apresentação
-4. **Tenha backup** (prints ou vídeo) caso a demo falhe
-5. **Pratique os números técnicos** (50 épocas, 42.000 dados, etc.)
-6. **Mantenha contato visual** com a audiência
-7. **Termine com impacto** - faça uma previsão ao vivo!
+| Parte da tela | O que mostrar |
+|---------------|---------------|
+| Sidebar (esquerda) | Campos de entrada |
+| Centro | Resultados das previsões |
+| Botão "Prever" | Fazer a previsão |
 
 ---
 
-## 📁 ARQUIVOS DO PROJETO
+## ❓ PERGUNTAS FREQUENTES E ONDE MOSTRAR A RESPOSTA
+
+| Pergunta | Onde mostrar a resposta |
+|----------|------------------------|
+| "Quantos dados usou?" | Notebook Seção 1: `len(df)` = 53.940 |
+| "Qual o erro médio?" | Notebook Seção 5: MAE em dólares |
+| "Por que 42?" | Notebook Seção 3: `random_state=42` |
+| "O que é Dropout?" | Notebook Seção 4: `layers.Dropout(0.2)` |
+| "Como funciona o Voting?" | Notebook Seção 5: `(pred1 + pred2) / 2` |
+| "Qual fator mais importante?" | Notebook Seção 2.4: Correlação Carat = 0.92 |
+
+---
+
+## 📁 ESTRUTURA DO PROJETO
 
 ```
 IaModel/
-├── models/                    # Cérebros treinados da IA
-│   ├── model1.keras          # Modelo 1 (simples)
-│   ├── model2.keras          # Modelo 2 (profundo)
-│   └── preprocessor.joblib   # Preparador de dados
+├── models/                              # Modelos treinados
+│   ├── model1.keras                     # Modelo 1 (simples)
+│   ├── model2.keras                     # Modelo 2 (com dropout)
+│   └── preprocessor.joblib              # Pré-processador de dados
 ├── notebooks/
-│   └── train_diamonds_colab.ipynb  # Notebook de treino
+│   └── train_diamonds_colab.ipynb       # Notebook de treino (Google Colab)
 ├── src/
-│   ├── api.py                # API do sistema
-│   ├── frontend.py           # Interface visual
-│   ├── train_diamonds.py     # Script de treino
-│   └── data_loader.py        # Carregador de dados
-└── scripts/
-    ├── run_api.bat           # Inicia a API
-    └── run_frontend.bat      # Inicia a interface
+│   ├── api.py                           # API REST do sistema
+│   └── frontend.py                      # Interface visual
+├── scripts/
+│   ├── run_api.bat                      # Inicia a API
+│   └── run_frontend.bat                 # Inicia a interface
+├── PRESENTATION.md                      # Este guia de apresentação
+└── requirements.txt                     # Dependências do projeto
 ```
+
+---
+
+## 🚀 COMO RODAR O PROJETO
+
+**1. Treinar os modelos (Google Colab):**
+- Faça upload do notebook para o Google Colab
+- Execute todas as células
+- Baixe os arquivos `model1.keras`, `model2.keras` e `preprocessor.joblib`
+- Coloque na pasta `models/`
+
+**2. Iniciar a API:**
+```bash
+cd src
+python -m uvicorn api:app --reload
+```
+
+**3. Iniciar o Frontend:**
+```bash
+cd src
+streamlit run frontend.py
+```
+
+---
+
+## 🎯 CHECKLIST PRÉ-APRESENTAÇÃO
+
+- [ ] Notebook rodou sem erros no Colab
+- [ ] Modelos baixados e na pasta `models/`
+- [ ] API iniciada e funcionando (`localhost:8000/docs`)
+- [ ] Frontend iniciado e funcionando (`localhost:8501`)
+- [ ] Testei uma previsão e funcionou
+- [ ] Tenho prints/vídeo de backup caso falhe
+- [ ] Decorei os números: 53.000, 42.000, 50 épocas, 32 batch
 
 ---
 

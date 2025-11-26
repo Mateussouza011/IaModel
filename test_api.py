@@ -4,7 +4,6 @@ import json
 import sys
 import os
 
-# Adicionar diretório atual ao path
 sys.path.append(os.path.dirname(__file__))
 
 client = TestClient(app)
