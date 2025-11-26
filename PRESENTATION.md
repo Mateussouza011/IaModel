@@ -6,7 +6,7 @@
 
 ## 📁 Estrutura do Projeto
 
-```
+```text
 IaModel/
 ├── models/                     → Modelos treinados (.keras + preprocessor)
 │   ├── model1.keras            → Rede Neural Simples (64→32→1)
@@ -58,11 +58,11 @@ IaModel/
 | 💰 Preço médio | **~$3.933** |
 | 💎 Preço máximo | **$18.823** |
 
-#### Células do Notebook para mostrar:
+#### Células do Notebook para mostrar
 
 | Célula | Conteúdo | O que explicar |
 |--------|----------|----------------|
-| **5** | `df.head()` - Primeiros dados | **"Vamos ver como são os dados reais"** - Mostra as primeiras 5 linhas do dataset com todas as características de cada diamante |
+| **5** | `df.head()` - Primeiros dados | **"Vamos ver como são os dados reais"** - Mostra as primeiras 10 linhas do dataset com todas as características de cada diamante |
 | **6** | `df.describe()` - Estatísticas | **"Entendendo a distribuição"** - Média, mediana, min/max de cada variável. Destaque: preços variam de $326 a $18.823! |
 | **10** | Histograma e Boxplot de preços | **"A maioria dos diamantes são baratos"** - Gráfico mostra que poucos diamantes custam mais de $10.000, distribuição concentrada em valores baixos |
 | **12** | Heatmap de correlação | **"Carat é TUDO!"** - Matriz colorida onde vermelho = correlação forte. Carat vs Price = 0.92 (quase perfeita). Dimensões X,Y,Z também importantes |
@@ -78,7 +78,7 @@ IaModel/
 
 #### Arquitetura dos Modelos
 
-```
+```text
 MODELO 1 (Simples)              MODELO 2 (Com Regularização)
 ┌─────────────────┐             ┌─────────────────┐
 │   Input (9)     │             │   Input (9)     │
@@ -115,14 +115,14 @@ MODELO 1 (Simples)              MODELO 2 (Com Regularização)
 | **Optimizer** | Adam | Adaptativo, eficiente |
 | **Loss** | MSE | Padrão para regressão |
 
-#### Células do Notebook:
+#### Células do Notebook (Treinamento)
 
 | Célula | Conteúdo |
 |--------|----------|
-| 16 | Pré-processamento (OneHotEncoder + StandardScaler) |
-| 18 | Definição da arquitetura dos modelos |
-| 19 | Treinamento (model.fit) |
-| 21 | Gráfico de histórico de treino (loss × epochs) |
+| **16** | Pré-processamento (OneHotEncoder + StandardScaler) |
+| **18** | Definição da arquitetura dos modelos |
+| **19** | Treinamento (model.fit) + Sumário dos modelos |
+| **21** | Gráfico de histórico de treino (loss × epochs) |
 
 ---
 
@@ -139,27 +139,29 @@ MODELO 1 (Simples)              MODELO 2 (Com Regularização)
 | **Ensemble (Voting)** | **~$270** | Média dos dois é mais estável |
 
 #### Como funciona o Voting?
+
 ```python
 preço_final = (modelo1.predict() + modelo2.predict()) / 2
 ```
 
-#### Células do Notebook:
+#### Células do Notebook (Resultados)
 
 | Célula | Conteúdo |
 |--------|----------|
-| 23 | Tabela comparativa de MAE |
-| 25 | Gráfico Previsão vs Real (scatter plot) |
-| 27 | Comparação visual de MAE entre modelos |
+| **23** | Tabela comparativa de MAE |
+| **25** | Gráfico Previsão vs Real (scatter plot) |
+| **27** | Comparação visual de MAE entre modelos |
 
 ---
 
 ### 5. Demonstração ao Vivo (3 min)
 
-#### Passo a passo:
+#### Passo a passo
 
 1. **Abra o frontend:** `http://localhost:8501`
 
 2. **Preencha um diamante de exemplo:**
+
    | Campo | Valor |
    |-------|-------|
    | Carat | 1.0 |
@@ -181,26 +183,32 @@ preço_final = (modelo1.predict() + modelo2.predict()) / 2
 ## 🚀 Como Rodar o Projeto
 
 ### Pré-requisitos
+
 ```bash
 pip install -r requirements.txt
 ```
 
 ### Iniciar a API (Terminal 1)
+
 ```bash
 cd IaModel
 python src/api.py
 ```
+
 > API rodando em: `http://127.0.0.1:8005`
 
 ### Iniciar o Frontend (Terminal 2)
+
 ```bash
 cd IaModel
 streamlit run src/frontend.py
 ```
+
 > Frontend rodando em: `http://localhost:8501`
 
 ### API em Produção (Railway)
-```
+
+```text
 https://web-production-94f5d.up.railway.app/predict
 ```
 
@@ -240,14 +248,3 @@ https://web-production-94f5d.up.railway.app/predict
 | **Data Processing** | Pandas, Scikit-learn |
 | **Visualização** | Plotly, Seaborn |
 | **Deploy** | Railway |
-
----
-
-## 👥 Equipe
-
-*Adicione os nomes dos integrantes aqui*
-
----
-
-> 💎 *"A IA não substitui o especialista, mas o capacita a tomar decisões mais rápidas e consistentes."*
-
