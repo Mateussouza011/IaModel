@@ -7,7 +7,8 @@ import os
 import tensorflow as tf
 from contextlib import asynccontextmanager
 
-BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+# Detecta o diretório base (funciona local e no Railway)
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 MODELS_DIR = os.path.join(BASE_DIR, 'models')
 MODEL1_PATH = os.path.join(MODELS_DIR, 'model1.keras')
 MODEL2_PATH = os.path.join(MODELS_DIR, 'model2.keras')
