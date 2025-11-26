@@ -62,11 +62,13 @@ IaModel/
 
 | Célula | Conteúdo | O que explicar |
 |--------|----------|----------------|
-| 5 | Primeiros dados | Estrutura do dataset |
-| 6 | Estatísticas | Distribuição dos valores |
-| 10 | Histograma e Boxplot | Distribuição de preços |
-| 12 | Matriz de correlação | **Carat tem 0.92 de correlação com preço!** |
-| 14 | Scatter Carat vs Preço | Relação visual peso × preço |
+| **5** | `df.head()` - Primeiros dados | **"Vamos ver como são os dados reais"** - Mostra as primeiras 5 linhas do dataset com todas as características de cada diamante |
+| **6** | `df.describe()` - Estatísticas | **"Entendendo a distribuição"** - Média, mediana, min/max de cada variável. Destaque: preços variam de $326 a $18.823! |
+| **10** | Histograma e Boxplot de preços | **"A maioria dos diamantes são baratos"** - Gráfico mostra que poucos diamantes custam mais de $10.000, distribuição concentrada em valores baixos |
+| **12** | Heatmap de correlação | **"Carat é TUDO!"** - Matriz colorida onde vermelho = correlação forte. Carat vs Price = 0.92 (quase perfeita). Dimensões X,Y,Z também importantes |
+| **14** | Scatter Carat vs Price | **"Visualização da relação peso × preço"** - Cada ponto é um diamante. Linha clara ascendente: quanto mais pesado, mais caro. Base da nossa IA! |
+
+> 💡 **Dica de apresentação:** Na célula 12, aponte para o quadrado vermelho escuro entre Carat e Price - essa é a "descoberta" que nossa IA vai aprender!
 
 ---
 
