@@ -95,7 +95,7 @@ def main():
     model1.save("models/model1.keras")
     model2.save("models/model2.keras")
     save_preprocessor(preprocessor, "models/preprocessor.joblib")
-    print("Models and preprocessor saved successfully.")
+    print("Modelo e preprocessor salvos com sucesso.")
 
 if __name__ == "__main__":
     main()
