@@ -27,25 +27,25 @@ IaModel/
 
 ### 2. Os Dados (3 min)
 
-| Característica | Significado |
-|----------------|-------------|
-| Carat | Peso (quilates) |
-| Cut | Qualidade do corte |
-| Color | Cor (D=melhor → J=pior) |
-| Clarity | Clareza interna |
-| X, Y, Z | Dimensões (mm) |
+| Característica | Significado             |
+|----------------|-------------------------|
+| Carat          | Peso (quilates)         |
+| Cut            | Qualidade do corte      |
+| Color          | Cor (D=melhor → J=pior) |
+| Clarity        | Clareza interna         |
+| X, Y, Z        | Dimensões (mm)          |
 
 **Números:** 53.940 diamantes | 80% treino / 20% teste | 9 características
 
 **Notebook:**
 
-| Célula | Conteúdo |
-|--------|----------|
-| 5 | Primeiros dados |
-| 6 | Estatísticas |
-| 10 | Histograma e Boxplot |
-| 12 | Matriz de correlação |
-| 14 | Scatter Carat vs Preço |
+| Célula | Conteúdo               |
+|--------|------------------------|
+| 5      | Primeiros dados        |
+| 6      | Estatísticas           |
+| 10     | Histograma e Boxplot   |
+| 12     | Matriz de correlação   |
+| 14     | Scatter Carat vs Preço |
 
 ---
 
@@ -53,11 +53,11 @@ IaModel/
 
 > "Redes neurais - como um cérebro artificial que aprende com exemplos."
 
-| Parâmetro | Valor |
-|-----------|-------|
-| Épocas | 50 |
-| Batch Size | 32 |
-| Validation | 20% |
+| Parâmetro  | Valor |
+|------------|-------|
+| Épocas     | 50    |
+| Batch Size | 32    |
+| Validation | 20%   |
 
 **Arquitetura:**
 - Modelo 1: 64 → 32 → 1
