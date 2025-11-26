@@ -112,7 +112,7 @@ with st.sidebar:
 st.title("Previsão de Preço de Diamantes")
 st.markdown("Avaliação avançada com IA baseada nos 4Cs (Quilates, Corte, Cor, Pureza) e dimensões.")
 
-API_URL = "http://127.0.0.1:8005/predict"
+API_URL = "https://web-production-94f5d.up.railway.app/predict"
 
 @st.cache_data
 def load_dataset():
