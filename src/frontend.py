@@ -5,7 +5,6 @@ import plotly.express as px
 import plotly.graph_objects as go
 import seaborn as sns
 
-# Configuração da Página
 st.set_page_config(
     page_title="Avaliação de Diamantes - IA",
     page_icon="💎",
@@ -13,7 +12,6 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- DESIGN SYSTEM & CSS (PREMIUM DARK MODE) ---
 st.markdown("""
 <style>
     @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap');
@@ -105,23 +103,19 @@ st.markdown("""
 </style>
 """, unsafe_allow_html=True)
 
-# --- SIDEBAR ---
 with st.sidebar:
     st.title("💎 Avaliação de Diamantes")
     st.markdown("Configure as características do diamante para obter uma estimativa de preço baseada em IA.")
     st.markdown("---")
     st.info("💡 **Dica:** O **Peso (Quilates)** e a **Qualidade do Corte** são os fatores que mais influenciam no preço.")
 
-# --- HEADER ---
 st.title("Previsão de Preço de Diamantes")
 st.markdown("Avaliação avançada com IA baseada nos 4Cs (Quilates, Corte, Cor, Pureza) e dimensões.")
 
-# --- DATA ---
 API_URL = "http://127.0.0.1:8005/predict"
 
 @st.cache_data
 def load_dataset():
-    # Fallback to seaborn if local file issues
     try:
         return pd.read_csv("data/diamonds.csv")
     except:
@@ -129,10 +123,8 @@ def load_dataset():
 
 df = load_dataset()
 
-# --- TABS ---
 tab_sim, tab_dash = st.tabs(["💎 Ferramenta de Avaliação", "📊 Análise de Mercado"])
 
-# --- TAB 1: SIMULATOR ---
 with tab_sim:
     st.markdown("<br>", unsafe_allow_html=True)
     
@@ -246,7 +238,6 @@ with tab_sim:
                     """, unsafe_allow_html=True)
                     
                 with col_res2:
-                    # Gauge Chart
                     fig = go.Figure(go.Indicator(
                         mode = "gauge+number",
                         value = price,
@@ -274,7 +265,6 @@ with tab_sim:
         except Exception as e:
             st.error(f"Erro de Conexão. A API está rodando? {e}")
 
-# --- TAB 2: DASHBOARD ---
 with tab_dash:
     st.subheader("Tendências de Mercado")
     st.markdown("Explore como as características influenciam o valor dos diamantes no mercado.")
